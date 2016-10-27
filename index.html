@@ -1,0 +1,286 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="./bower_components/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="./bower_components/reveal.js/css/reveal.css">
+        <link rel="stylesheet" href="./bower_components/reveal.js/css/theme/night.css">
+        <link rel="stylesheet" href="./highlight.js/styles/dracula.css">
+        <link rel="stylesheet" href="./style.css">
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">
+
+                <section class="title-slide">
+                  <h1>Keeping your Promises: JavaScript Edition</h1>
+                  <h3>Casey A. Ydenberg</h3>
+                  <p><i class="fa fa-twitter"></i> @CAYdenberg</p>
+                  <p><i class="fa fa-github"></i> CAYdenberg</p>
+                  <p><i class="fa fa-envelope-o"></i> ydenberg@gmail.com</p>
+                  <p><i class="fa fa-globe"></i> caseyy.org</p>
+                </section>
+
+
+
+                <section>
+                  <img src="./images/el-mike.jpeg" />
+
+                  <div class="text-left">
+                    <p><strong>Eleven: </strong>Promise?</p>
+                    <p><strong>Mike: </strong>It's something you can't break. Ever.</p>
+                  </div>
+                </section>
+
+
+
+                <section>
+                  <img src="./images/pandas.jpg" />
+
+                  <blockquote>
+                    We are committed to ensuring that 2015 will be the last federal election conducted under the first-past-the-post voting system.
+                  </blockquote>
+
+                </section>
+
+
+                <section>
+                    <h2>Recap: Synchronous vs asynchonous code</h2>
+
+                      <h3>In <strong>PHP:</strong></h3>
+                      <pre><code class="php">
+$data = file_get_contents('http://a/resource/somewhere');
+                      </code></pre>
+
+                      <h3>In <strong>JavaScript:</strong></h3>
+                      <pre><code class="javascript">
+http.get('http://a/resource/somewhere', function(res) {
+  // deal with response
+});
+                      </code></pre>
+                </section>
+
+
+
+
+                <section>
+                  <h2>Callbacks vs Promises</h2>
+
+                  <div class="2-col">
+                    <div class="column">
+                      <h3>Callback</h3>
+http.get('http://a/resource/somewhere', function(res) {
+  // deal with response
+});
+                    </div>
+                    <div class="column">
+                      <h3>Promise</h3>
+httpPromise.get('http://a/resource/somewhere').then(function(res) {
+  // deal with response
+});
+                    </div>
+                  </div>
+
+                  <h3>Advantages</h3>
+                  <ul>
+                    <li class="fragment">Readability</li>
+                    <li class="fragment">Dealing with errors</li>
+                    <li class="fragment">Chaining and returning</li>
+                  </ul>
+
+                </section>
+
+
+
+
+                <section>
+                  <h2>Types of Promises</h2>
+                  <ul>
+                    <li>Q (https://github.com/kriskowal/q)</li>
+                    <li>Bluebird (https://github.com/petkaantonov/bluebird)
+                    <li>jQuery deferred (https://api.jquery.com/category/deferred-object/)</li>
+                    <li><strong>ES6/A+ specification</strong></li>
+                  </ul>
+
+                  <h3>Can I use it?</h3>
+                  <img src="./images/browser-support.png" width="440" />
+
+                  <p>Since Node.js 0.12</p>
+
+                  <p><strong>Polyfill:</strong> https://github.com/stefanpenner/es6-promise</p>
+
+                  <p>... Babel</p>
+                </section>
+
+
+
+
+                <section>
+                  <h2>How does it work?</h2>
+                  <pre><code class="javascript">
+const url = 'https://api.forecast.io/forecast/APIKEY/50.1149639,-122.9486474';
+fetchUrl(url).then(function(res) {
+  console.log('The current temperature is ' + res.body.currently.temperature);
+}, function(err) {
+  console.log(err)
+});
+                  </code></pre>
+                  <p>... or ...</p>
+                  <pre class="fragment"><code class="javascript">
+fetchUrl(url).then(function(res) {
+  console.log('The current temperature is ' + res.body.currently.temperature);
+}).catch(function(err) {
+  console.log(err)
+});
+                  </code></pre>
+                </section>
+
+
+                <section>
+                  <h2>Creating you own Promises</h2>
+                  <pre><code class="javascript">
+function wait(time) {
+  return new Promise(function(resolve) {
+    setTimeout(resolve, time);
+  });
+}
+
+wait(1000).then(function() {
+  console.log('Promise kept!');
+})
+                  </code></pre>
+                  <pre class="fragment"><code class="javascript">
+function fetchUrl(url) {
+  return new Promise(function(resolve, reject) {
+    http.get(address, function(response) {
+      if (response.status === 200) {
+        return resolve(response.body);
+      else {
+        return reject(Error('Not Found'));
+      }
+    });
+  });
+}
+                  </code></pre>
+                </section>
+
+
+
+                <section>
+                  <h2>The real power: multiple async operations</h2>
+                  <p>Imagine you're getting some data from a database, and then processing it asynchonously:</p>
+                  <pre><code class="javascript">
+getDataFromDb(params, function(data) {
+  processData(data, function(moreData) {
+    // deal with data
+  });
+});
+                  </code></pre>
+
+                  <p>If we encapsulate this logic in a function, what do we return?</p>
+
+                </section>
+
+
+                <section>
+                  <h2>Wrap everything in a single promise</h2>
+                  <pre><code class="javascript">
+function queryDb(params) {
+  return new Promise(resolve, reject) {
+
+    getDataFromDb(params, function(data) {
+      getMoreDataFromDb(data, function(moreData) {
+        resolve(moreData);
+      });
+    });
+
+  });
+}
+
+queryDb.then(...);
+                </code></pre>
+              </section>
+
+
+
+              <section>
+                <h2>Chaining promises</h2>
+                <p><code class="javascript">.then</code> always returns another promise. Very useful.</p>
+
+                <pre><code class="javascript">
+myPromise.then(function(dataOne) {
+  // process dataOne and create another promise
+  return myOtherPromise(dataOne);
+}).then(function(dataTwo) {
+  // do something with dataTwo
+});
+                </code></pre>
+                <p>Chaining advantages:</p>
+                <ul>
+                  <li>Break the chain anywhere and return. Separate logic based on what makes sense.</li>
+                  <li><code class="javascript">.catch</code> at the end will handle error anywhere in the chain.</li>
+                  <li>You can return another promise but deal with the <em>result</em> of that promise.</li>
+                </ul>
+              </section>
+
+
+
+              <section>
+                <h2>Parallel Promises</h2>
+                <pre><code class="javascript">
+var p1 = Promise.resolve(3);
+var p2 = 1337;
+var p3 = new Promise(function(resolve, reject) {
+  setTimeout(resolve, 1000, "foo");
+});
+
+Promise.all([p1, p2, p3]).then(function(values) {
+  console.log(values); // [3, 1337, "foo"]
+});
+
+                </code></pre>
+              </section>
+
+
+              <section>
+                <h2>... but don't forget to catch</h2>
+                <blockquote>
+                  <p>What the actual flying fuck? Promises swallows errors by default! Who&rsquo;s idea was that?</p>
+                  <footer>Reddit user /u/ledp</footer>
+                </blockquote>
+
+                <pre><code class="javascript">
+Promise.resolve('promised value').then(function() {
+  throw new Error('error');
+}).catch(function(error) {
+  console.error(error.stack);
+});
+                </code></pre>
+                <p>http://jamesknelson.com/are-es6-promises-swallowing-your-errors/</p>
+
+              </section>
+
+              <section>
+                <h2>Acknowledgement</h2>
+                <ul>
+                  <li>Jake Archibald (https://developers.google.com/web/fundamentals/getting-started/primers/promises)</li>
+                  <li>MDN (https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise)</li>
+                  <li>James K. Nelson (http://jamesknelson.com/are-es6-promises-swallowing-your-errors/)</li>
+                </ul>
+              </section>
+
+
+
+
+            </div>
+        </div>
+
+        <script src="./bower_components/reveal.js/js/reveal.js"></script>
+        <script src="./highlight.js/highlight.pack.js"></script>
+        <script>
+            Reveal.initialize({
+              center: false
+            });
+            hljs.initHighlightingOnLoad();
+        </script>
+    </body>
+</html>

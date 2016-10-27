@@ -1,0 +1,19 @@
+{
+  "name": "promises",
+  "version": "0.0.0",
+  "authors": [
+    "CAYdenberg <casey@graphos.ca>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "reveal.js": "~3.3.0",
+    "font-awesome": "^4.6.3"
+  }
+}
