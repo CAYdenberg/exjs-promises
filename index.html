@@ -171,18 +171,18 @@ function fetchUrl(url) {
                   <h2>Using Promises</h2>
                   <pre><code class="javascript">
 const url = 'https://api.forecast.io/forecast/APIKEY/50.1149639,-122.9486474';
-fetchUrl(url).then(function(res) {
-  console.log('The current temperature is ' + res.body.currently.temperature);
+fetchUrl(url).then(function(data) {
+  console.log(data);
 }, function(err) {
-  console.log(err)
+  console.log(err);
 });
                   </code></pre>
                   <p>... or ...</p>
                   <pre class="fragment"><code class="javascript">
-fetchUrl(url).then(function(res) {
-  console.log('The current temperature is ' + res.body.currently.temperature);
+fetchUrl(url).then(function(data) {
+  console.log(data);
 }).catch(function(err) {
-  console.log(err)
+  console.log(err);
 });
                   </code></pre>
                 </section>
