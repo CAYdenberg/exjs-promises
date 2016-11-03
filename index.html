@@ -234,16 +234,18 @@ queryDb.then(...);
 myPromise.then(function(dataOne) {
   // process dataOne and create another promise
   return myOtherPromise(dataOne);
-}).then(function(dataTwo) {
+})<span class="fragment">.then(function(dataTwo) {
   // do something with dataTwo
-});
+});</span>
                 </code></pre>
+                <div class="fragment">
                 <p>Chaining advantages:</p>
-                <ul>
-                  <li>Break the chain anywhere and return. Separate logic based on what makes sense.</li>
-                  <li><code class="javascript">.catch</code> at the end will handle error anywhere in the chain.</li>
-                  <li>You can return another promise but deal with the <em>result</em> of that promise.</li>
-                </ul>
+                  <ul>
+                    <li>Break the chain anywhere and return. Separate logic based on what makes sense.</li>
+                    <li><code class="javascript">.catch</code> at the end will handle error anywhere in the chain.</li>
+                    <li>You can return another promise but deal with the <em>result</em> of that promise.</li>
+                  </ul>
+                </div>
               </section>
 
 
